@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import * as Font from "expo-font";
 import AppLoading from "expo-app-loading";
+import MealsNavigator from "./navigation/MealsNavigator";
 
 const fetchFonts = () => {
   return Font.loadAsync({
@@ -24,9 +25,6 @@ export default function App() {
     );
   }
 
-  return (
-    <View>
-      <Text>Open up App.js to start working on your app!</Text>
-    </View>
-  );
+  // 이걸 그냥 Return 하면 된다는거네.
+  return <MealsNavigator />;
 }
