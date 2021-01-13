@@ -1,24 +1,28 @@
 import React from "react";
-import { View, Text, StyleSheet, Button } from "react-native";
+import { View, Text, StyleSheet, FlatList } from "react-native";
+import { CATEGORIES } from "../data/dummy-data";
+
+const renderGridItem = (itemData) => {
+  return (
+    <View style={styles.gridItem}>
+      {/* models 파일에 있는 Class 형태를 Object가 따르기 떄문에
+      title이라는 것을 사용할 수 있다는 것임. */}
+      <Text>{itemData.item.title}</Text>
+    </View>
+  );
+};
 
 const CategoriesScreen = (props) => {
   return (
-    <View style={styles.screen}>
-      <Text>This is Categories Screen</Text>
-      <Button
-        title="Go to Meals!"
-        onPress={() => {
-          props.navigation.navigate({ routeName: "CategoryMeals" });
-          // 사실 다른 페이지로 넘어가는 다른 방법이 있긴 함.
-          // props.navigation.push를 써도 되긴 함.
-          // props.navigation.replace('CategoryMeals');
-          // 이렇게 해도 넘어가긴 하는데 문제는, Page 전환 애니메이션이 적용이
-          // 안될 뿐 더러, Stack에 쌓이지 않기 때문에, 뒤돌아가기 버튼이
-          // 활성화 되지 않는다는 특징이 있다. 그냥 stack에 쌓이지 않고 이동하는
-          // 뭐 그런거라고 간단하게 생각을 하면 될 듯.
-        }}
-      />
-    </View>
+    // 기본적으로 columns의 값은 1인데,
+    // 원하는 칼럼의 갯수를 정할 수 있다는 것 정도 새롭게 알면 된다.
+    // FlatList를 사용하는건 꽤 여러번 해서 뭐 익숙하긴 하네.
+    <FlatList
+      keyExtractor={(item, index) => item.id}
+      data={CATEGORIES}
+      renderItem={renderGridItem}
+      numColumns={2}
+    />
   );
 };
 
@@ -27,6 +31,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  gridItem: {
+    flex: 1,
+    margin: 15,
+    height: 150,
   },
 });
 
