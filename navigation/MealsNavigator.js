@@ -1,7 +1,13 @@
+import React from "react";
 import { createStackNavigator } from "react-navigation-stack";
 import { createAppContainer } from "react-navigation";
 import { Ionicons } from "@expo/vector-icons";
-import React from "react";
+// 뭐 이거 안드로이드를 위해서 Material bottom tabs라는것을 또 깔았음.
+// 그리고 OS에 따라서 바꿀꺼니까 Platform이라는 것도 필요해서 추가로
+// import 하였음.
+import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
+import { Platform } from "react-native";
+
 import { createBottomTabNavigator } from "react-navigation-tabs";
 import CategoriesScreen from "../screens/CatagoriesScreen";
 import CategoryMealsScreen from "../screens/CategoryMealsScreen";
@@ -29,58 +35,69 @@ const MealsNavigator = createStackNavigator(
   }
 );
 
-const MealsFavTabNavigator = createBottomTabNavigator(
-  {
-    // 물론 MealsNavigator에는 저기 위에서 navigationOptions를
-    // default로 해줘서 해줬지만, 지금은 TabNavigator 안에 nested 되어 있음으로
-    // Tab과 관련된 navigationOptions 설정은 여기서 해줘야 한다. 뭐 그렇게 이해가 된다.
-    // 지금은 Tab과 관련된 Icon을 해주기 위해서 이러한 일을 하고 있는 것이다.
-    Meals: {
-      screen: MealsNavigator,
-      navigationOptions: {
-        tabBarIcon: (tabInfo) => {
-          // tinColor라는 것은 저 밑에서 설정한 Colors.accentColor를 가져오게 된다는 것이다.
-          // tabInfo라는 것이 두 번쨰 argument와 관련 있는 것이라고 생각된다.
-          return (
-            // 흠 여기서 JSX를 이용하기 때문에 React를 import 해야 하는 문제가 생겼다.
-            // 사실 뭐 문제는 아니지만. 그렇다고..
-            // ios-restaurant 같은 경우는 특정 value임. 찾아서 해야 한다는 것이다.
-            <Ionicons
-              name="ios-restaurant"
-              size={25}
-              color={tabInfo.tintColor}
-            />
-          );
-        },
+// 이거는 이제 두 곳에 비슷하게 사용될 것이기 때문에
+// 따로 뺴줬다. 뭐 어려운거 아님.
+
+const tabScreenConfig = {
+  Meals: {
+    screen: MealsNavigator,
+    navigationOptions: {
+      tabBarIcon: (tabInfo) => {
+        return (
+          <Ionicons name="ios-restaurant" size={25} color={tabInfo.tintColor} />
+        );
       },
-    },
-    // 뭐 여기도 비슷하게 꾸며줬다 정도.
-    Favorites: {
-      screen: FavoritesScreen,
-      navigationOptions: {
-        // 보다 싶이, 여기에 들어갈 props는 되게 많을 것임.
-        // 나중에 doc 찾아서 필요한 것들을 적용해나가면 되겠음.
-        tabBarLabel: "Favorites",
-        tabBarIcon: (tabInfo) => {
-          return (
-            <Ionicons name="ios-star" size={25} color={tabInfo.tintColor} />
-          );
-        },
-      },
+      // 그 탭을 눌렀을떄, Bottom Tabs의 Color를 정할 수 있다는 것임.
+      // 뭐 이런 props도 있구나 생각을 하면 된다.
+      // 탭마다 특정 색깔을 정해주면은 뭐 더 세련되긴 하겠다.
+      // 디자인 적인 팁이니까 뭐 그려려니 해라.
+      // 아 그리고 특징적인 것은 저 밑에 shifting이라는 것이 true가 되어야지만
+      // 이게 작동됨. 안그러면 의미가 없으니까 나중에 체크해라.
+      tabBarColor: Colors.primaryColor,
     },
   },
-  // 이렇게 두 번쨰 argument를 줘가지고 여러가지를 더 config
-  // 할 수 있다는 것을 알면 된다.
-  // 어떤 property를 적용해야 할지 모른다면은 control + spacebar를 누르면은
-  // 쓸 수 있는 property를 적절히 볼 수 있으니까 참고하도록 하자.
-  {
-    // 뭐 이러한 옵션을 줘서 더 꾸밀 수 있다는 것이다.
-    tabBarOptions: {
-      // active 되었을때, 글자의 색을 config 할 수 있다는 것임.
-      // 왜 Tint 인지는 잘 모르겠지만.
-      activeTintColor: Colors.accentColor,
+  Favorites: {
+    screen: FavoritesScreen,
+    navigationOptions: {
+      tabBarLabel: "Favorites",
+      tabBarIcon: (tabInfo) => {
+        return <Ionicons name="ios-star" size={25} color={tabInfo.tintColor} />;
+      },
+      tabBarColor: Colors.accentColor,
     },
-  }
-);
+  },
+};
+
+// 좀 지저분하긴 한데
+// Platform을 이용하여 OS에 따른 다른
+// BottonTabNavigator를 이용했다 정도 생각을 하면 되겠음.
+// 근데 다행인건 지금 두개의 BottomTabNabigator가 존재하지만.
+// 쓰는 방법은 거의 같다는게 참 다행이지.
+// 그렇기 때문에 tabScreenConfig를 따로 뺴서, 재사용하겠다는 거임.
+// 비슷하긴 한데, 두번째 argument가 좀 다르기 떄문에 그것만 좀 체크를해서
+// 알아두면 된다.
+// 흠 근데 이거롤 바꾸니까 더블클릭해야지 옮겨짐.
+// 버그인가. 나중에 고쳐보도록 하자.
+const MealsFavTabNavigator =
+  Platform.OS === "android"
+    ? createMaterialBottomTabNavigator(tabScreenConfig, {
+        // activeTintColor가 아닌거 조심!!
+        activeColor: "white",
+        // 뭐 이거 하면은 탭을 누를떄 어떤 효과를 주니까
+        // 그냥 써라. 나쁘지 않은 것 같다. 뭐 안써도 괜찮은 것 같고.
+        // 나중에 실제로 적용을 할 떄 고려해봐라.
+        shifting: true,
+        // 그리고 추가로 해서 shifting을 하면은 위에
+        // tabBarColor가 의미가 있지만, shifting을 false로 할거면은
+        // 이런식으로 default color를 정해줘야 한다는 것 까지 알면 된다.
+        // barStyle:{
+        //   backgroundColor:Colors.primaryColor
+        // }
+      })
+    : createBottomTabNavigator(tabScreenConfig, {
+        tabBarOptions: {
+          activeTintColor: Colors.accentColor,
+        },
+      });
 
 export default createAppContainer(MealsFavTabNavigator);
