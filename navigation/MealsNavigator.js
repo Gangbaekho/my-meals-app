@@ -1,61 +1,51 @@
 import { createStackNavigator } from "react-navigation-stack";
 import { createAppContainer } from "react-navigation";
+
+// Botton Tab을 만드려면은 이것을 따로 install 해줘야 한다.
+// 나는 지금 navigation version 4 이상을 쓰고 있기 때문에 이렇게 했다.
+import { createBottomTabNavigator } from "react-navigation-tabs";
 import CategoriesScreen from "../screens/CatagoriesScreen";
 import CategoryMealsScreen from "../screens/CategoryMealsScreen";
 import MealDetailScreen from "../screens/MealDetailScreen";
+import FavoritesScreen from "../screens/FavoritesScreen";
 import Colors from "../constants/Colors";
 
 const MealsNavigator = createStackNavigator(
   {
-    // 이렇게 Categories도 또한 변경을 해보았다.
     Categories: {
       screen: CategoriesScreen,
-      // navigationOptions: {
-      //   headerTitle: "Meal Categories",
-      //   headerStyle: {
-      //     backgroundColor: Colors.primaryColor,
-      //   },
-      //   headerTintColor: "white",
-      // },
     },
     CategoryMeals: {
       screen: CategoryMealsScreen,
-      // 이렇게 그 스크린에 대한 Default navigation options을
-      // 줄 수 있다는 것이 point인데 여기서 주나, 거기서 주나
-      // 사실 마찬가지처럼 보이긴 하는데, 뭐가 더 있나?
-      // 음.. 뭐 같은 파일에서 config를 한다는 것이 장점이라고 하긴 하는데
-      // 글쎼다 딱히 엄청난 장점처럼은 느껴지지 않는다.
-      // navigationOptions: {
-      //   headerStyle: {
-      //     backgroundColor: Colors.primaryColor,
-      //   },
-      //   headerTintColor: "white",
-      // },
     },
     MealDetail: MealDetailScreen,
   },
-  // 두 번쨰 argument에다가 이러한 것들을 놓을 수 있다는 것도
-  // 알아둬야 한다.
   {
-    // 이걸 해두면은 각각 screen 마다 일일히 navigationOptions를 정해주지 않아도
-    // 이게 동작한다는 그런 말이다.
-    // 일단 이게 default이기 떄문에 이게 적용되긴 하는데,
-    // 특정 screen에서 설정을 해주면 그게 우선순위가 높아진다 뭐 그렇게 생각하면 됨.
-    // 사실 상식적인 내용임.
     defaultNavigationOptions: {
       headerStyle: {
         backgroundColor: Colors.primaryColor,
       },
       headerTintColor: "white",
     },
-    // 사실 그리고 이 두번쨰 argument인 object에는 여러가지가 들어 갈 수 있다.
-    // 뭐 그거에 대해서는 나중에 document를 참조해서 공부를 하는게 맞다고 생각이 든다.
-    // 여기에서는 그냥 defulatNavigationOptions만 생각을 하도록 하자.
-    // 예를 들어서 이런게 있긴 함.
-    // initialRouteName:'MealDetail' 이라고 지정을 할 수 있는데
-    // 설정상 Categories 이게 먼저 나오게 되어 있찌만은.
-    // 첫번쨰 라우트 네임을 저렇게 바꿈으로써 처음 나오는 것을 바꿔줄 수 있다는 것이다.
   }
 );
 
-export default createAppContainer(MealsNavigator);
+// 이렇게 Bottom Tab을 위해서 하나 더 만들어 줘야 한다.
+const MealsFavTabNavigator = createBottomTabNavigator({
+  // 음.. 위에 있는 stack navigator 처럼 config를 해줄 수 있는데.
+  // 일단은 이렇게 위해 있는 Navigator 자체를 적어놓았네, Screen과
+  // mapping을 하지 않고 Navigator과 mapping을 했다는 것을 눈여겨 보자.
+  Meals: MealsNavigator,
+  // 근데 이놈은 또 Screen이랑 Mapping을 해줬다.
+  // 이 두 개의 차이점을 적절히 알면은 뭐 이것도 끝나는거지.
+  Favorites: FavoritesScreen,
+});
+
+// 일단은 MealsFavTabNavigator라는 것이
+// 결국에는 Stack Navigator를 포함하고 있는 형태이기 때문에
+// 밑에것을 이렇게 지워주고, 저러한 형태로 바꿔야 한다.
+// 이런식으로 여러개의 Navigator를 Combine 한다라고 생각을 하면 된다.
+// 결국 하나의 Root Navigator만 export를 하는 형태임.
+// 뭐 이렇게 까지 하면은 Bottom Tab이 생기긴 했다.
+// export default createAppContainer(MealsNavigator);
+export default createAppContainer(MealsFavTabNavigator);

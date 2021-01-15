@@ -25,6 +25,7 @@
     "react-navigation": "^4.4.3",
     "react-navigation-header-buttons": "^6.0.2",
     "react-navigation-stack": "^2.10.2",
+    "react-navigation-tabs": "^2.10.1",
     "start": "^5.1.0"
   },
   "devDependencies": {
