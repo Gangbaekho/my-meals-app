@@ -1,17 +1,13 @@
 import React from "react";
 import { View, Text, StyleSheet, Button } from "react-native";
+// 여기서 주의해야 할 것은 HeaderButtons이다. 복수형이라는 것.
+// 아까 HeaderButton에서 쓴 것은 단수형태였다. 그거 주의하고
+import { HeaderButtons, Item } from "react-navigation-header-buttons";
+import HeaderButton from "../components/HeaderButton";
 
-// 이건 지금 서버랑 연동이 안되어있기 때문에
-// Dummy data를 hard coding으로 만든거일 뿐임.
-// 나중에 서버처리를 해주면 됨.
 import { MEALS } from "../data/dummy-data";
 
 const MealDetailScreen = (props) => {
-  // 또 이렇게 params를 navigation을 통해서 또 받아오면 된다.
-  // React에서는 url을 통해서 뭔가를 하지만
-  // 여기는 navigation을 이용한다 라고 생각을 하면 됨.
-  // 어짜피 둘다 parameter를 주고 받는건 마찬가지이다.
-  // 그냥 방법이 다를 뿐.
   const mealId = props.navigation.getParam("mealId");
 
   const selectedMeal = MEALS.find((meal) => meal.id === mealId);
@@ -29,15 +25,42 @@ const MealDetailScreen = (props) => {
   );
 };
 
-// 여기서는 또 이거 써가지고 동적으로 뭔가를
-// 처리하는 로직을 짤거임.
-// 결국엔 뭐 Navigation header를 적절하게 표한하기 위해서
-// 저번에 했던 것을 또 그대로 하는 거구나.
 MealDetailScreen.navigationOptions = (navigationData) => {
   const mealId = navigationData.navigation.getParam("mealId");
   const selectedMeal = MEALS.find((meal) => meal.id === mealId);
   return {
     headerTitle: selectedMeal.title,
+    // 음 이런것을 써줄 수 있다.
+    // 이건 Title이랑은 좀 다른데,
+    // Title이 있는 그 라인의 가장 오른쪽에다가
+    // JSX를 쓸 수 있다 뭐 그런 말이다.
+    // 그런데 이걸 하려면은 npm install npm start
+    // 이걸 깔아줘야 한다는데, 글쎄다. 패키지 이름이 좀 이상하고
+    // 이해가 안가긴 하는데, 저걸 안깔아주면은 저게 발동이 안된다.
+    // 이렇게 간단한 Text를 쓸 수도 있지만, Icon이나 Logo를 박는게 보통이다.
+    // 근데 뭐가 마음에 안드는지
+    // npm install --save react-navigation-header-buttons 이걸 깔라고 하네.
+    // headerRight: <Text>FAV!</Text>,
+    // 글쎼다. 뭐 아래 내용이 꽤나 와닿지는 않으나 이거 보고 따라할 수는 있을 것이다.
+    headerRight: (
+      <HeaderButtons HeaderButtonComponent={HeaderButton}>
+        {/* 
+        title은 알아서 정해주면 되고
+        ios-star이라는 것은 이미 정해져 있는 value이다.
+        Ionicons에 있는 그런 icons들 중에 하나일 것으로 예측되니,
+        뭐 나중에 알아서 찾아보도록 하자.
+        그리고 여기에는 뭐 Item을 하나만 두긴 했지만,
+        여러개 둬도 됨. 그럼 Icon이 여러개 생기겠찌 뭐.
+        */}
+        <Item
+          title="Favorite"
+          iconName="ios-star"
+          onPress={() => {
+            console.log("Mark as favorite");
+          }}
+        />
+      </HeaderButtons>
+    ),
   };
 };
 

@@ -14,8 +14,6 @@ const CategoryMealsScreen = (props) => {
         complexity={itemData.item.complexity}
         affordability={itemData.item.affordability}
         image={itemData.item.imageUrl}
-        // 이렇게 또 설정을 해주면은
-        // CategoryMealsScreen -> MealDetailScreen으로 움직일 수 있겠지.
         onSelectMeal={() => {
           props.navigation.navigate({
             routeName: "MealDetail",
