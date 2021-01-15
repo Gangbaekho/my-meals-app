@@ -3,22 +3,24 @@ import { View, Text, StyleSheet, FlatList } from "react-native";
 
 import { CATEGORIES, MEALS } from "../data/dummy-data";
 import Colors from "../constants/Colors";
+import MealItem from "../components/MealItem";
 
 const CategoryMealsScreen = (props) => {
-  // FlatList를 위해서 이러한 함수를 만들어 줬다.
-  // 말 그대로 rendering을 위한 함수라고 생각을 하면 된다.
   const renderMealItem = (itemData) => {
     return (
-      <View>
-        <Text>{itemData.item.title}</Text>
-      </View>
+      <MealItem
+        title={itemData.item.title}
+        duration={itemData.item.duration}
+        complexity={itemData.item.complexity}
+        affordability={itemData.item.affordability}
+        image={itemData.item.imageUrl}
+        onSelectMeal={() => {}}
+      />
     );
   };
 
   const catId = props.navigation.getParam("categoryId");
 
-  // 결국엔 그냥 카테고리에 포함되는 meals만 필터링 시키는 것임.
-  // 그냥 비지니스 로직이니까. 뭐 그리 중요한건 아님
   const displayedMeals = MEALS.filter(
     (meal) => meal.categoryIds.indexOf(catId) >= 0
   );
@@ -30,6 +32,7 @@ const CategoryMealsScreen = (props) => {
         data={displayedMeals}
         keyExtractor={(item, index) => item.id}
         renderItem={renderMealItem}
+        style={{ width: "100%" }}
       />
     </View>
   );
