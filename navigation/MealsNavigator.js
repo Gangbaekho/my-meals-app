@@ -2,23 +2,27 @@ import React from "react";
 import { createStackNavigator } from "react-navigation-stack";
 import { createAppContainer } from "react-navigation";
 import { Ionicons } from "@expo/vector-icons";
-import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 import { Platform } from "react-native";
 
+// Navigatoer
+import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 import { createBottomTabNavigator } from "react-navigation-tabs";
+// 이번에 추가해야 할 Navigator이다.
+import { createDrawerNavigator } from "react-navigation-drawer";
+
 import CategoriesScreen from "../screens/CatagoriesScreen";
 import CategoryMealsScreen from "../screens/CategoryMealsScreen";
 import MealDetailScreen from "../screens/MealDetailScreen";
 import FavoritesScreen from "../screens/FavoritesScreen";
+import FiltersScreen from "../screens/FiltersScreen";
 import Colors from "../constants/Colors";
 
+// 여기에서 좀 오류가 있어서 수정을 해줬다.
 const defaultStackNavOptions = {
-  defaultNavigationOptions: {
-    headerStyle: {
-      backgroundColor: Colors.primaryColor,
-    },
-    headerTintColor: "white",
+  headerStyle: {
+    backgroundColor: Colors.primaryColor,
   },
+  headerTintColor: "white",
 };
 
 const MealsNavigator = createStackNavigator(
@@ -31,8 +35,6 @@ const MealsNavigator = createStackNavigator(
     },
     MealDetail: MealDetailScreen,
   },
-  // 밑에서도 사용하니까 그냥
-  // 위에다가 새로 const로 만들어서 재사용 했다.
   {
     defaultNavigationOptions: defaultStackNavOptions,
   }
@@ -41,13 +43,8 @@ const MealsNavigator = createStackNavigator(
 const FavNavigator = createStackNavigator(
   {
     Favorites: FavoritesScreen,
-    // 보면은 위에 있는 Navigator에도
-    // MealDetailScreen이 있지만 뭐 그래도 상관이 없음.
-    // 동일한 Screen이 있어도 상관이 없다는 말임.
     MealDetail: MealDetailScreen,
   },
-  // 밑에서도 사용하니까 그냥
-  // 위에다가 새로 const로 만들어서 재사용 했다.
   {
     defaultNavigationOptions: defaultStackNavOptions,
   }
@@ -65,10 +62,6 @@ const tabScreenConfig = {
       tabBarColor: Colors.primaryColor,
     },
   },
-  // 지금 문제가 되는 것은
-  // Favorites 또한 여러개의 Screen을 가지는
-  // Stack Navigator로 바꾸면 된다는 것임.
-  // 위에 처럼 말이다.
   Favorites: {
     screen: FavNavigator,
     navigationOptions: {
@@ -80,6 +73,11 @@ const tabScreenConfig = {
     },
   },
 };
+
+// 흠 일단 이걸 또 추가시키긴 했다.
+const FiltersNavigator = createStackNavigator({
+  Fliters: FiltersScreen,
+});
 
 const MealsFavTabNavigator =
   Platform.OS === "android"
@@ -93,4 +91,14 @@ const MealsFavTabNavigator =
         },
       });
 
-export default createAppContainer(MealsFavTabNavigator);
+// 여기다가 이번에 배울 Navigator를 config 해보자
+const MainNavigator = createDrawerNavigator({
+  // 또 이거를 중첩시키네.. 뭐 그럴 수 있찌.
+  MealsFavs: MealsFavTabNavigator,
+  // 얘도 방금 만든 것임.
+  Filters: FiltersNavigator,
+});
+
+// export default createAppContainer(MealsFavTabNavigator);
+// 이것도 이제 Root Navigator가 바뀌었으니까 바꿔줘야 한다.
+export default createAppContainer(MainNavigator);
