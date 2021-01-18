@@ -4,12 +4,7 @@ import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import HeaderButton from "../components/HeaderButton";
 import DefaultText from "../components/DefaultText";
 
-import { MEALS } from "../data/dummy-data";
-// Favorites Meals를 추가하기 위해서는 Dispatch가 필요하기 떄문에
-// useDispatch를 추가해주면 된다.
 import { useSelector, useDispatch } from "react-redux";
-// Dispatch를 사용한다는 것은 결국에는 action을 사용한다는 의미니까
-// 사용하고 싶은 action을 import 해줘야 한다.
 import { toggleFavorite } from "../store/actions/meals";
 
 const ListItem = (props) => {
@@ -22,30 +17,35 @@ const ListItem = (props) => {
 
 const MealDetailScreen = (props) => {
   const availableMeals = useSelector((state) => state.meals.meals);
-
   const mealId = props.navigation.getParam("mealId");
+
+  // 이미 favorite list에 있는지 체크하고
+  // empty 별을 출력할지, not empty 별을 출력할지 하는 그런
+  // 로직을 짜기 위해서 만든 것이다.
+  // 여기서 some이라는 method는 처음보는데
+  // 있으면 true, 없으면 false를 return하는 그런 method로 추측된다.
+  const currentMealIsFavorite = useSelector((state) =>
+    state.meals.favoriteMeals.some((meal) => meal.id === mealId)
+  );
 
   const selectedMeal = availableMeals.find((meal) => meal.id === mealId);
 
-  // 이런식으로 일단은 dispatch라는 것을 만들어준다음에
-  // 적절한 곳에 사용을 하면 된다.
-  // 한번 intiailize 해주는게 좋겠찌 매번 useDispatch를 호출하는 것 보다.
   const dispatch = useDispatch();
 
-  // 여기서도 useCallback을 사용햇으니까
-  // 왜 사용했는지, depencency는 왜 dispatch와 mealId로 했는지에 대해서
-  // 생각을 해보면 된다.
   const toggleFavoriteHandler = useCallback(() => {
     dispatch(toggleFavorite(mealId));
   }, [dispatch, mealId]);
 
-  // 이걸 하는 것은 headerRight에다가 해당 기능을 붙여넣어여 하기 때문에
-  // navigation에다가 해당 기능을 넣어주는 것으로 생각을 하면 된다.
-  // navigation에 있는 button을 이용하지 않을 것이면 굳이 안해도
-  // 되는 것으로 생각된다.
   useEffect(() => {
     props.navigation.setParams({ toggleFav: toggleFavoriteHandler });
   }, [toggleFavoriteHandler]);
+
+  // 뭐 이런식으로 useEffect를 하나 더 써줬다 정도.
+  // 이것도 navigation에다가 전달하는 거니까
+  // 밑에 또 이것을 이용해서 수정을 해야 겠지.
+  useEffect(() => {
+    props.navigation.setParams({ isFav: currentMealIsFavorite });
+  }, [currentMealIsFavorite]);
 
   return (
     <ScrollView>
@@ -69,19 +69,21 @@ const MealDetailScreen = (props) => {
 };
 
 MealDetailScreen.navigationOptions = (navigationData) => {
-  // const mealId = navigationData.navigation.getParam("mealId");
   const mealTitle = navigationData.navigation.getParam("mealTitle");
-  // 위에서 넘겨준 것을 여기로 받은다음에, Icon을 클릭할떄
-  // 이것이 발동하게 만들어주면 된다는 것이지.
   const toggleFavorite = navigationData.navigation.getParam("toggleFav");
+  const isFavorite = navigationData.navigation.getParam("isFav");
   return {
     headerTitle: mealTitle,
     headerRight: (
       <HeaderButtons HeaderButtonComponent={HeaderButton}>
+        {/* 
+        여기에다가 삼항연산자를 통해서 분기처리하는 모습이다.
+        ios-star-outline이 empty start를 의미하는 것으로 생각하면 되겠다.
+        그런데 또 문제는 여기서 Loading이 좀 느려서 늦게 반응한다? 뭐 그런게 있음.
+        */}
         <Item
           title="Favorite"
-          iconName="ios-star"
-          // 여기에서 toggleFavorite를 적용한 모습이다.
+          iconName={isFavorite ? "ios-star" : "ios-star-outline"}
           onPress={toggleFavorite}
         />
       </HeaderButtons>
