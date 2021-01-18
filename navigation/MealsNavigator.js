@@ -16,24 +16,12 @@ import FiltersScreen from "../screens/FiltersScreen";
 import Colors from "../constants/Colors";
 
 const defaultStackNavOptions = {
-  // 여기 나오는 headerStyle은 headerTitle을 포함하고 있는
-  // View를 의미한다고 생각하면 된다. 그래서
-  // headerTitle에 대한 스타일링을 하려면 다른 property를
-  // 이용해야 한다는 것이다.
   headerStyle: {
     backgroundColor: Colors.primaryColor,
   },
-  // 이것은 headerTitle 그 자체를 스타일링 하는 것이다.
-  // 내가 알기 쉽게 표현하자면은 Text 그 자체를 styling 하는 것이라고
-  // 보면 된다. 이건 해당하는 Navigation이 활성화 됐을 시에 styling을 하는 것이라면
   headerTitleStyle: {
     fontFamily: "open-sans-bold",
   },
-  // 이것은 뒤로가기 버튼에 딸려있는 headerTitle을 스타일링을 할떄
-  // 이걸 쓴다는 거다. 꽤나 복잡하네 이거, config가.
-  // 근데 이 headerBackTitleStyle은 IOS에만 관련이 있다.
-  // 즉 IOS 만 headerBackTitle을 가지고 있다 뭐 그렇게 보면 된다.
-  // 실제로 그러하다.
   headerBackTitleStyle: {
     fontFamily: "open-sans",
   },
