@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useDispatch } from "react-redux";
+import { setFilters } from "../store/actions/meals";
 
 import { View, Text, StyleSheet, Switch, Platform } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
@@ -27,6 +29,8 @@ const FiltersScreen = (props) => {
   const [isVegan, setIsVegan] = useState(false);
   const [isVegetarian, setIsVegetarian] = useState(false);
 
+  const dispatch = useDispatch(setFilters);
+
   const saveFilters = useCallback(() => {
     const appliedFilters = {
       glutenFree: isGlutenFree,
@@ -35,8 +39,11 @@ const FiltersScreen = (props) => {
       vegetarian: isVegetarian,
     };
 
-    console.log(appliedFilters);
-  }, [isGlutenFree, isLactoseFree, isVegan, isVegetarian]);
+    // 이제 관련 로직을 다 만들었으니까 console.log하는게 아니라
+    // dispatch를 해서 fileringSetting을 맞춰주도록하자.
+    // console.log(appliedFilters);
+    dispatch(setFilters(appliedFilters));
+  }, [isGlutenFree, isLactoseFree, isVegan, isVegetarian, dispatch]);
 
   useEffect(() => {
     navigation.setParams({ save: saveFilters });
