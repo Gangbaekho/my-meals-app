@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import HeaderButton from "../components/HeaderButton";
@@ -21,6 +21,10 @@ const MealDetailScreen = (props) => {
   const mealId = props.navigation.getParam("mealId");
 
   const selectedMeal = availableMeals.find((meal) => meal.id === mealId);
+
+  // useEffect(() => {
+  //   props.navigation.setParams({ mealTitle: selectedMeal.title });
+  // }, [selectedMeal]);
 
   return (
     <ScrollView>
@@ -45,13 +49,9 @@ const MealDetailScreen = (props) => {
 
 MealDetailScreen.navigationOptions = (navigationData) => {
   const mealId = navigationData.navigation.getParam("mealId");
-  // 문제는 여기서 MEALS를 사용하고 있다는 것이다.
-  // 하지만 여기서 useSelector를 쓸 수는 없음
-  // Functional component에서만 useSelector를 쓸 수 있기 때문이다.
-  // 다음에는 이것을 어떻게 처리하는지에 대해서 설명한다고 한다.
-  const selectedMeal = MEALS.find((meal) => meal.id === mealId);
+  const mealTitle = navigationData.navigation.getParam("mealTitle");
   return {
-    headerTitle: selectedMeal.title,
+    headerTitle: mealTitle,
     headerRight: (
       <HeaderButtons HeaderButtonComponent={HeaderButton}>
         <Item

@@ -16,6 +16,11 @@ const MealList = (props) => {
             routeName: "MealDetail",
             params: {
               mealId: itemData.item.id,
+              // 이렇게 MealDetail로 들어가기 전의
+              // 상위 component에서 먼저 세팅을 해주고 들어가게 되면은
+              // 로딩이 늦어지는 문제를 해결할 수 있다.
+              // 미리 그것을 알고 가는 것 이기 떄문이다.
+              mealTitle: itemData.item.title,
             },
           });
         }}
