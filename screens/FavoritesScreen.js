@@ -9,9 +9,6 @@ import DefaultText from "../components/DefaultText";
 const FavoritesScreen = (props) => {
   const favMeals = useSelector((state) => state.meals.favoriteMeals);
 
-  // 뭐 그냥 Favorites meals가 아직 없을떄는
-  // 그냥 if로 분기처리해서 다른 component를 보여준다는 것임.
-  // 별거 없음.
   if (favMeals.length === 0 || !favMeals) {
     return (
       <View style={styles.content}>
