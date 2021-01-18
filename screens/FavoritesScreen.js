@@ -1,19 +1,22 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import MealList from "../components/MealList";
-import { MEALS } from "../data/dummy-data";
+// 여기에서도 마찬가지로 MEALS를 직접 쓰지 않고
+// Store에 있는 favorites meals를 가져다가 쓸 것이기 떄문에
+// 이것을 주석처리 해주는 것이다.
+// import { MEALS } from "../data/dummy-data";
+// 그 대신에 아래에 있는 것을 import 해줘야 한다.
+import { useSelector } from "react-redux";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import HeaderButton from "../components/HeaderButton";
 
 const FavoritesScreen = (props) => {
-  // m1, m2는 임시로 달아놓은 favMeals의 조건이다.
-  const favMeals = MEALS.filter((meal) => meal.id === "m1" || meal.id === "m2");
+  // 여기에서도 필요한 favorites meals 만을 가져온다는 것에
+  // 초점을 맞추면 된다.
+  const favMeals = useSelector((state) => state.meals.favoriteMeals);
   return <MealList listData={favMeals} navigation={props.navigation} />;
 };
 
-// FavoritesScreen에서도 햄버거바가 보이도록
-// setting을 해줘야 하기 떄문에 이렇게 여기에다가도 한 것임.
-// 뭐 특별한 것 없이 거의 복붙 해오면 됨.
 FavoritesScreen.navigationOptions = (navData) => {
   return {
     headerTitle: "Your Favorites",

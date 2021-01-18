@@ -1,20 +1,11 @@
 import React from "react";
-// 일단은 Detail Page이니까. 정보가 많을 수 있다.
-// 그러니까 그냥 ScrollView를 통해서 묶어주겠다는 그런 말이다.
-// 그리고 이미지 첨부할꺼니까 Image component도 추가하였음.
-import {
-  View,
-  Text,
-  StyleSheet,
-  Button,
-  ScrollView,
-  Image,
-} from "react-native";
+import { View, Text, StyleSheet, ScrollView, Image } from "react-native";
 import { HeaderButtons, Item } from "react-navigation-header-buttons";
 import HeaderButton from "../components/HeaderButton";
 import DefaultText from "../components/DefaultText";
 
 import { MEALS } from "../data/dummy-data";
+import { useSelector } from "react-redux";
 
 const ListItem = (props) => {
   return (
@@ -25,9 +16,11 @@ const ListItem = (props) => {
 };
 
 const MealDetailScreen = (props) => {
+  const availableMeals = useSelector((state) => state.meals.meals);
+
   const mealId = props.navigation.getParam("mealId");
 
-  const selectedMeal = MEALS.find((meal) => meal.id === mealId);
+  const selectedMeal = availableMeals.find((meal) => meal.id === mealId);
 
   return (
     <ScrollView>
@@ -52,6 +45,10 @@ const MealDetailScreen = (props) => {
 
 MealDetailScreen.navigationOptions = (navigationData) => {
   const mealId = navigationData.navigation.getParam("mealId");
+  // 문제는 여기서 MEALS를 사용하고 있다는 것이다.
+  // 하지만 여기서 useSelector를 쓸 수는 없음
+  // Functional component에서만 useSelector를 쓸 수 있기 때문이다.
+  // 다음에는 이것을 어떻게 처리하는지에 대해서 설명한다고 한다.
   const selectedMeal = MEALS.find((meal) => meal.id === mealId);
   return {
     headerTitle: selectedMeal.title,
