@@ -40,9 +40,6 @@ const MealDetailScreen = (props) => {
     props.navigation.setParams({ toggleFav: toggleFavoriteHandler });
   }, [toggleFavoriteHandler]);
 
-  // 뭐 이런식으로 useEffect를 하나 더 써줬다 정도.
-  // 이것도 navigation에다가 전달하는 거니까
-  // 밑에 또 이것을 이용해서 수정을 해야 겠지.
   useEffect(() => {
     props.navigation.setParams({ isFav: currentMealIsFavorite });
   }, [currentMealIsFavorite]);
@@ -76,11 +73,6 @@ MealDetailScreen.navigationOptions = (navigationData) => {
     headerTitle: mealTitle,
     headerRight: (
       <HeaderButtons HeaderButtonComponent={HeaderButton}>
-        {/* 
-        여기에다가 삼항연산자를 통해서 분기처리하는 모습이다.
-        ios-star-outline이 empty start를 의미하는 것으로 생각하면 되겠다.
-        그런데 또 문제는 여기서 Loading이 좀 느려서 늦게 반응한다? 뭐 그런게 있음.
-        */}
         <Item
           title="Favorite"
           iconName={isFavorite ? "ios-star" : "ios-star-outline"}
