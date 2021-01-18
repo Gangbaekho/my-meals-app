@@ -2,7 +2,7 @@ import React from "react";
 import { createStackNavigator } from "react-navigation-stack";
 import { createAppContainer } from "react-navigation";
 import { Ionicons } from "@expo/vector-icons";
-import { Platform } from "react-native";
+import { Platform, Text } from "react-native";
 
 import { createMaterialBottomTabNavigator } from "react-navigation-material-bottom-tabs";
 import { createBottomTabNavigator } from "react-navigation-tabs";
@@ -16,8 +16,26 @@ import FiltersScreen from "../screens/FiltersScreen";
 import Colors from "../constants/Colors";
 
 const defaultStackNavOptions = {
+  // 여기 나오는 headerStyle은 headerTitle을 포함하고 있는
+  // View를 의미한다고 생각하면 된다. 그래서
+  // headerTitle에 대한 스타일링을 하려면 다른 property를
+  // 이용해야 한다는 것이다.
   headerStyle: {
     backgroundColor: Colors.primaryColor,
+  },
+  // 이것은 headerTitle 그 자체를 스타일링 하는 것이다.
+  // 내가 알기 쉽게 표현하자면은 Text 그 자체를 styling 하는 것이라고
+  // 보면 된다. 이건 해당하는 Navigation이 활성화 됐을 시에 styling을 하는 것이라면
+  headerTitleStyle: {
+    fontFamily: "open-sans-bold",
+  },
+  // 이것은 뒤로가기 버튼에 딸려있는 headerTitle을 스타일링을 할떄
+  // 이걸 쓴다는 거다. 꽤나 복잡하네 이거, config가.
+  // 근데 이 headerBackTitleStyle은 IOS에만 관련이 있다.
+  // 즉 IOS 만 headerBackTitle을 가지고 있다 뭐 그렇게 보면 된다.
+  // 실제로 그러하다.
+  headerBackTitleStyle: {
+    fontFamily: "open-sans",
   },
   headerTintColor: "white",
 };
@@ -57,6 +75,15 @@ const tabScreenConfig = {
         );
       },
       tabBarColor: Colors.primaryColor,
+      // 뭐 여기에서도 이렇게 할 수 있다는 것이다.
+      // 특이한 것은 JSX를 여기다가 추가할 수 있다는 것 정도 생각을 하면 되겠다.
+      // 뭐 그냥 추가로 OS마다 다르게 표현하도록 하였음.
+      tabBarLabel:
+        Platform.OS === "android" ? (
+          <Text style={{ fontFamily: "open-sans-bold" }}>Meals</Text>
+        ) : (
+          "Meals"
+        ),
     },
   },
   Favorites: {
@@ -67,6 +94,12 @@ const tabScreenConfig = {
         return <Ionicons name="ios-star" size={25} color={tabInfo.tintColor} />;
       },
       tabBarColor: Colors.accentColor,
+      tabBarLabel:
+        Platform.OS === "android" ? (
+          <Text style={{ fontFamily: "open-sans-bold" }}>Favorites</Text>
+        ) : (
+          "Favorites"
+        ),
     },
   },
 };
@@ -77,18 +110,6 @@ const FiltersNavigator = createStackNavigator(
   },
 
   {
-    // FiltersNavigator에서만 동작하는 navigationOptions를 달아줄 수 있다.
-    // 이것은 뭐 default 를 무시하거나, Filters에서만 동작하도록 하는 무언가겠찌.
-    // navigationOptions: {
-    // drawerLabel 이라는 것은 Main Navigator에서 목록의 이름을
-    // 바꾸는 것과 관련이 있다. 밑에서도 바꿀 수 있찌만, 뭐 여기서도 바꿀 수 있다.
-    // 그런말을 하는 듯 하다.
-    // 뭐 이건 적용은 안할거고 필요할떄 알아서 바꾸면 된다 이거다.
-    // 그런데 여기서 하기 보다는 그냥 MainNavigator에서 config를 하는 방법을
-    // 여기서는 선택했다.
-    // drawerLabel: "Filters!!",
-    // },
-    // FiltersNavigator에다가도 defaultNavigationOptions를 달아줬다.
     defaultNavigationOptions: defaultStackNavOptions,
   }
 );
@@ -101,18 +122,19 @@ const MealsFavTabNavigator =
       })
     : createBottomTabNavigator(tabScreenConfig, {
         tabBarOptions: {
+          // 이 labelStyle을 새로 추가해줬는데
+          // TabNavigator니까 Tab에 관련된 labelStyle을 바꿔준거라고
+          // 상식적으로 생각을 하면 되겠음.
+          labelStyle: {
+            fontFamily: "open-sans-bold",
+          },
           activeTintColor: Colors.accentColor,
         },
       });
 
 const MainNavigator = createDrawerNavigator(
   {
-    // 여기에 나오는 것들이
-    // MainNavigator에 나오는 이름이 되는 것임.
-    // 여기 나오는 Key 값들을 바꾸면은 그 이름이 바뀌게 되는 것임.
     MealsFavs: {
-      // 이런식으로 조금 수정을 해서 MainNavigator의 목록의
-      // 이름을 Root Navigator를 통해서 수정을 했다
       screen: MealsFavTabNavigator,
       navigationOptions: {
         drawerLabel: "Meals",
@@ -120,9 +142,6 @@ const MainNavigator = createDrawerNavigator(
     },
     Filters: FiltersNavigator,
   },
-  // 여기는 MainNavigator의 목록에 대해서 더 option을 줄 수 있다는 건데
-  // 여기서는 styling에 관한 것을 적용해보았다.
-  // 뭐 더 자세한 것은 당연히 docs에 가서 확인을 해봐야겠다.
   {
     contentOptions: {
       activeTintColor: Colors.accentColor,
